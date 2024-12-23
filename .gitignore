@@ -8,8 +8,7 @@ node_modules
 # testing
 /coverage
 
-.env
-Google_sheet.json
+
 
 
 
