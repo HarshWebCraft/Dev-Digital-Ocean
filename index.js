@@ -14,56 +14,13 @@ const { openTrades } = require("./paper trade/placeOrder.js");
 const User = require("./models/users.js");
 const requestIp = require("request-ip");
 // const strategy = require("./routes/strategy.js");
-
-const signup = require("./routes/signup");
-const signin = require("./routes/signin");
-const addbroker = require("./routes/addbroker");
-const checkBroker = require("./routes/checkBroker");
-const deleteBroker = require("./routes/deleteBroker");
-const userInfo = require("./routes/userInfo");
-const dbschema = require("./routes/dbschema");
-const removeClient = require("./routes/removeClient");
-const verifyemail = require("./routes/verifyemail");
 const wbSocket = require("./websocket/wbLiveData");
 const getSymbole = require("./websocket/getSymbol");
-const saveUserData = require("./saveUserData");
 const axios = require("axios");
 const { WebSocket } = require("ws");
 const strategy = require("./routes/strategy");
-const addExcelData = require("./createExcel/createExcel");
-const resetPassword = require("./routes/resetPassword");
-const forgetPassword = require("./routes/forgetPassword");
-const tour = require("./routes/tour");
-const removeMyStra = require("./routes/removeMyStra");
-const addDeployed = require("./routes/addDeployed");
-const removeDeployed = require("./routes/removeDeployed");
-const checkLink = require("./routes/checkLink");
-const mobileno = require("./routes/mobileno");
-const profile = require("./routes/profile");
-const updateprofile = require("./routes/updateprofile");
-const navbar = require("./routes/navbar");
-const addToWallet = require("./routes/addToWallet");
-const verifypayment = require("./routes/verifypayment");
-const newamount = require("./routes/newamount");
-const mystartegies = require("./routes/mystartegies");
-const subscribe = require("./routes/subscribe");
-const addMarketPlaceData = require("./routes/addMarketPlaceData.js");
-const getMarketPlace = require("./routes/getMarketPlace.js");
-const updateSubscribe = require("./routes/updateSubscribe.js");
-const removeSubscribe = require("./routes/removeSubscribe.js");
-const getUserBalance = require("./routes/addDeltaBroker.js");
 const strategy_2 = require("./Stra_2/Stra_2.js");
 const strategy_3 = require("./Stra_3/Stra_3.js");
-const authSignUp = require("./routes/authSignUP.js");
-
-const {
-  fetchSheetData,
-  downloadCSV,
-  fetchAllSheetData,
-} = require("./routes/fetchExcelData.js");
-const removeDeployStra = require("./routes/removeDeployStra.js");
-const authSignIn = require("./routes/authSignIn.js");
-
 require("./models/users");
 const corsOptions = {
   origin: "*",
@@ -94,46 +51,8 @@ mongoose
   });
 
 const port = process.env.port || 5000;
-
-app.post("/signup", signup);
-app.post("/signin", signin);
-app.post("/addbroker", addbroker);
-app.post("/checkBroker", checkBroker);
-app.post("/deleteBroker", deleteBroker);
-app.post("/userinfo", userInfo);
-app.post("/dbschema", dbschema);
-app.post("/removeClient", removeClient);
 app.post("/wbSocket", wbSocket);
 app.post("/getSymbol", getSymbole);
-app.post("/verifyemail", verifyemail);
-app.post("/add-excel-data", addExcelData);
-app.post("/resetPassword", resetPassword);
-app.post("/forgetPassword", forgetPassword);
-app.post("/tour", tour);
-app.post("/removeMyStra", removeMyStra);
-app.post("/addDeployed", addDeployed);
-app.post("/removeDeployed", removeDeployed);
-app.post("/checkLink", checkLink);
-app.post("/mobileno", mobileno);
-app.post("/profile", profile);
-app.post("/updateprofile", updateprofile);
-app.post("/navbar", navbar);
-app.post("/addtowallet", addToWallet);
-app.post("/verify-payment", verifypayment);
-app.post("/newamount", newamount);
-app.post("/myStrategies", mystartegies);
-app.post("/subscribe", subscribe);
-app.post("/addMarketPlaceData", addMarketPlaceData);
-app.post("/getMarketPlaceData", getMarketPlace);
-app.post("/updateSubscribe", updateSubscribe);
-app.post("/removeSubscribe", removeSubscribe);
-app.post("/addDeltaBroker", getUserBalance);
-app.post("/fetchSheetData", fetchSheetData);
-app.post("/removeDeployStra", removeDeployStra);
-app.post("/downloadCSV", downloadCSV);
-app.post("/fetchAllSheetData", fetchAllSheetData);
-app.post("/auth/signup", authSignUp);
-app.post("/auth/signin", authSignIn);
 
 app.get("/api/live-pnl", (req, res) => {
   const pnlData = openTrades.map((trade) => ({
