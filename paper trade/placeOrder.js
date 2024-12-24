@@ -1,12 +1,19 @@
 const WebSocket = require("ws");
+const http = require("http");
 const PaperTrade = require("./PaperTrade");
 const setupWebSocket = require("./websocket");
 
 let openTrades = [];
 const clients = []; // To track connected WebSocket clients
 
-// Setup WebSocket Server
-const wss = new WebSocket.Server({ port: 8080 });
+// Create an HTTP server
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("WebSocket server is running\n");
+});
+
+// Attach WebSocket server to the HTTP server
+const wss = new WebSocket.Server({ server });
 
 wss.on("connection", (ws) => {
   console.log("New client connected");
@@ -19,7 +26,7 @@ wss.on("connection", (ws) => {
   });
 });
 
-// Function to broadcast data to all connected clients
+// Broadcast data to all connected WebSocket clients
 function broadcast(data) {
   clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
@@ -56,7 +63,7 @@ function handlePriceUpdate(symbol, spotPrice, closeWebsocket) {
           `Running P&L for ${trade.side} trade: ${trade.runningPnL} $`
         );
 
-        // Broadcast running PnL to connected clients
+        // Broadcast running P&L to WebSocket clients
         broadcast({
           symbol: trade.symbol,
           side: trade.side,
@@ -70,5 +77,10 @@ function handlePriceUpdate(symbol, spotPrice, closeWebsocket) {
     }
   });
 }
+
+// Start the HTTP and WebSocket server on port 5000
+server.listen(5000, () => {
+  console.log("Server is running on http://localhost:5000");
+});
 
 module.exports = { placeOrder, openTrades };
