@@ -19,10 +19,30 @@ wss.on("connection", (ws) => {
   console.log("New client connected");
   clients.push(ws);
 
+  const id = setInterval(() => {
+    const pAndLData = openTrades
+      .map((trade) => {
+        if (trade.isOpen && trade.isPlaced) {
+          return {
+            symbol: trade.symbol,
+            side: trade.side,
+            runningPnL: trade.runningPnL,
+          };
+        }
+        return null;
+      })
+      .filter((data) => data !== null);
+
+    ws.send(JSON.stringify(pAndLData), (err) => {
+      if (err) console.error("Error sending data to client:", err);
+    });
+  }, 100);
+
   ws.on("close", () => {
     console.log("Client disconnected");
     const index = clients.indexOf(ws);
     if (index > -1) clients.splice(index, 1);
+    clearInterval(id);
   });
 });
 
