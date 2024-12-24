@@ -50,7 +50,7 @@ mongoose
     console.log("Error is " + e);
   });
 
-const port = process.env.port || 5000;
+const port = process.env.port || 5001;
 app.post("/wbSocket", wbSocket);
 app.post("/getSymbol", getSymbole);
 
