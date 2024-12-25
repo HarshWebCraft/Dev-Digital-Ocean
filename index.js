@@ -37,7 +37,7 @@ app.get("/server/test", async (req, res) => {
   console.log(strategyId);
   const allUsers = await User.find({ DeployedStrategies: strategyId });
   console.log(allUsers);
-  res.json("hello world 2 " + allUsers);
+  res.json("hello world " + allUsers);
 });
 app.use(bodyParser.json());
 
