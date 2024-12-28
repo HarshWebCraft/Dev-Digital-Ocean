@@ -57,7 +57,7 @@ wss2.on("connection", (ws) => {
   const interval = setInterval(() => {
     const randomAlphabet = String.fromCharCode(65 + Math.floor(Math.random() * 26)); // Generate random alphabet (A-Z)
     ws.send(JSON.stringify({ randomAlphabet }));
-  }, 1000); // Send every second
+  }, 100); // Send every second
 
   ws.on("close", () => {
     clearInterval(interval);
