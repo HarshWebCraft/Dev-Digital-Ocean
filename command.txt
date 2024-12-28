@@ -14,3 +14,7 @@ start client
 
 
 npm start
+
+
+
+https://dev-test-x-algos.netlify.app/

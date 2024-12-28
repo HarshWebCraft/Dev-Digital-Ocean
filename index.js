@@ -32,30 +32,59 @@ const WebSocket = require("ws");
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
 
-const port = 5000; // Change if needed
+// First WebSocket server
+const wss1 = new WebSocket.Server({ noServer: true });
+wss1.on("connection", (ws) => {
+  console.log("Client connected to WebSocket 1");
 
-// WebSocket logic
-wss.on("connection", (ws) => {
-  console.log("Client connected");
-
-  // Send live time every second
   const interval = setInterval(() => {
-    const currentTime = new Date().toISOString();
-    ws.send(JSON.stringify({ time: currentTime })); // Send current time to client
+    ws.send(JSON.stringify({ data1: "Data from WebSocket 1", time: new Date().toISOString() }));
   }, 1000);
 
-  // Clean up on disconnect
   ws.on("close", () => {
-    console.log("Client disconnected");
     clearInterval(interval);
+    console.log("WebSocket 1 client disconnected");
   });
 });
 
+// Second WebSocket server
+const wss2 = new WebSocket.Server({ noServer: true });
+wss2.on("connection", (ws) => {
+  console.log("Client connected to WebSocket 2");
+
+  const interval = setInterval(() => {
+    ws.send(JSON.stringify({ data2: "Data from WebSocket 2", randomNumber: Math.random() }));
+  }, 1000);
+
+  ws.on("close", () => {
+    clearInterval(interval);
+    console.log("WebSocket 2 client disconnected");
+  });
+});
+
+// Route the WebSocket connection to the correct WebSocket server
+server.on("upgrade", (request, socket, head) => {
+  const pathname = request.url;
+
+  if (pathname === "/ws1") {
+    wss1.handleUpgrade(request, socket, head, (ws) => {
+      wss1.emit("connection", ws, request);
+    });
+  } else if (pathname === "/ws2") {
+    wss2.handleUpgrade(request, socket, head, (ws) => {
+      wss2.emit("connection", ws, request);
+    });
+  } else {
+    socket.destroy();
+  }
+});
+
 // Start the server
-server.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-  console.log(`WebSocket server running at ws://localhost:${port}`);
+const port = process.env.PORT || 5000;
+server.listen(port, "0.0.0.0", () => {
+  console.log(`Server running at http://0.0.0.0:${port}`);
+  console.log(`WebSocket 1 available at ws://0.0.0.0:${port}/ws1`);
+  console.log(`WebSocket 2 available at ws://0.0.0.0:${port}/ws2`);
 });
 
