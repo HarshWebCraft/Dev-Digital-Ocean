@@ -25,7 +25,6 @@
 // app.listen(port, () => {
 //   console.log("http://localhost:5000");
 // });
-
 const express = require("express");
 const http = require("http");
 const WebSocket = require("ws");
@@ -33,49 +32,57 @@ const WebSocket = require("ws");
 const app = express();
 const server = http.createServer(app);
 
-// First WebSocket server
+// WebSocket Server 1 (Random Alphabets)
 const wss1 = new WebSocket.Server({ noServer: true });
-wss1.on("connection", (ws) => {
-  console.log("Client connected to WebSocket 1");
 
-  const interval = setInterval(() => {
-    const randomNumber = Math.floor(Math.random() * 10); // Generate random number 0-9
-    ws.send(JSON.stringify({ randomNumber }));
-  }, 100); // Send continuously
+// Broadcast the same random alphabet to all clients in wss1
+const broadcastRandomAlphabet = () => {
+  const randomData = {
+    char: String.fromCharCode(65 + Math.floor(Math.random() * 26)), // Random alphabet (A-Z)
+    timestamp: new Date().toISOString(),
+  };
 
-  ws.on("close", () => {
-    clearInterval(interval);
-    console.log("WebSocket 1 client disconnected");
+  wss1.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(randomData));
+    }
   });
-});
+};
 
-// Second WebSocket server
+// WebSocket Server 2 (Random Numbers)
 const wss2 = new WebSocket.Server({ noServer: true });
-wss2.on("connection", (ws) => {
-  console.log("Client connected to WebSocket 2");
 
-  const interval = setInterval(() => {
-    const randomAlphabet = String.fromCharCode(65 + Math.floor(Math.random() * 26)); // Generate random alphabet (A-Z)
-    ws.send(JSON.stringify({ randomAlphabet }));
-  }, 100); // Send every second
+// Broadcast the same random number to all clients in wss2
+const broadcastRandomNumber = () => {
+  const randomData = {
+    number: Math.floor(Math.random() * 100), // Random number between 0 and 99
+    timestamp: new Date().toISOString(),
+  };
 
-  ws.on("close", () => {
-    clearInterval(interval);
-    console.log("WebSocket 2 client disconnected");
+  wss2.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(randomData));
+    }
   });
-});
+};
 
-// Route the WebSocket connection to the correct WebSocket server
+// Start intervals for broadcasting
+setInterval(broadcastRandomAlphabet, 1000); // Broadcast to WebSocket 1 every second
+setInterval(broadcastRandomNumber, 2000); // Broadcast to WebSocket 2 every 2 seconds
+
+// Handle WebSocket connections
 server.on("upgrade", (request, socket, head) => {
   const pathname = request.url;
 
   if (pathname === "/ws1") {
     wss1.handleUpgrade(request, socket, head, (ws) => {
       wss1.emit("connection", ws, request);
+      console.log("Client connected to WebSocket 1");
     });
   } else if (pathname === "/ws2") {
     wss2.handleUpgrade(request, socket, head, (ws) => {
       wss2.emit("connection", ws, request);
+      console.log("Client connected to WebSocket 2");
     });
   } else {
     socket.destroy();
@@ -89,5 +96,4 @@ server.listen(port, "0.0.0.0", () => {
   console.log(`WebSocket 1 available at ws://0.0.0.0:${port}/ws1`);
   console.log(`WebSocket 2 available at ws://0.0.0.0:${port}/ws2`);
 });
-
 
