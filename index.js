@@ -39,8 +39,9 @@ wss1.on("connection", (ws) => {
   console.log("Client connected to WebSocket 1");
 
   const interval = setInterval(() => {
-    ws.send(JSON.stringify({ data1: "Data from WebSocket 1", time: new Date().toISOString() }));
-  }, 1000);
+    const randomNumber = Math.floor(Math.random() * 10); // Generate random number 0-9
+    ws.send(JSON.stringify({ randomNumber }));
+  }, 100); // Send continuously
 
   ws.on("close", () => {
     clearInterval(interval);
@@ -54,8 +55,9 @@ wss2.on("connection", (ws) => {
   console.log("Client connected to WebSocket 2");
 
   const interval = setInterval(() => {
-    ws.send(JSON.stringify({ data2: "Data from WebSocket 2", randomNumber: Math.random() }));
-  }, 1000);
+    const randomAlphabet = String.fromCharCode(65 + Math.floor(Math.random() * 26)); // Generate random alphabet (A-Z)
+    ws.send(JSON.stringify({ randomAlphabet }));
+  }, 1000); // Send every second
 
   ws.on("close", () => {
     clearInterval(interval);
@@ -87,4 +89,5 @@ server.listen(port, "0.0.0.0", () => {
   console.log(`WebSocket 1 available at ws://0.0.0.0:${port}/ws1`);
   console.log(`WebSocket 2 available at ws://0.0.0.0:${port}/ws2`);
 });
+
 
